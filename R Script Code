@@ -1,0 +1,322 @@
+FullData <- rbind(Data_April, Data_August, Data_Dezember, Data_Februar, Data_Januar, Data_Juli, Data_Juni, Data_Maerz, Data_Mai, Data_November, Data_Oktober, Data_September)
+# Subset with only relevant columns
+data <- subset(FullData, select = c(3,5,6,11,12,13,14, 15, 16, 17, 18 , 19,20,21,22,23,28,29,30,31,33,36,38,41,42,43,44,46,47,48, 51, 54, 55, 56, 57, 58, 59, 60, 61, 64, 65, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76))
+# Rename Columns
+names(data)[names(data) == "Product Group"] <- "PG"
+names(data)[names(data) == "Distribution Program"] <- "DP"
+names(data)[names(data) == "COO New"] <- "COO"
+names(data)[names(data) == "Colorfulness New"] <- "CF"
+names(data)[names(data) == "Fit New"] <- "Fit"
+names(data)[names(data) == "Length New"] <- "Length"
+names(data)[names(data) == "Material Purity New"] <- "MP"
+names(data)[names(data) == "Main Material"] <- "MM"
+names(data)[names(data) == "Natural Fiber Percentage"] <- "NFP"
+names(data)[names(data) == "Organic Material"] <- "OM"
+names(data)[names(data) == "Sales Price before Return"] <- "Price"
+names(data)[names(data) == "Non-Textile Parts"] <- "NTP"
+names(data)[names(data) == "Ease of Care"] <- "EasyCare"
+names(data)[names(data) == "Pattern New"] <- "Pattern"
+names(data)[names(data) == "Belt Loop"] <- "BeltLoop"
+names(data)[names(data) == "Sleeve Length"] <- "SL"
+names(data)[names(data) == "Leg Length"] <- "LLength"
+names(data)[names(data) == "Leg Shape"] <- "LShape"
+names(data)[names(data) == "Product Gender"] <- "PGender"
+names(data)[names(data) == "Frequency Segment"] <- "FS"
+names(data)[names(data) == "Monetary Segment"] <- "MS"
+names(data)[names(data) == "Lifecycle Segment"] <- "LS"
+names(data)[names(data) == "Sleeve New"] <- "Sleeve"
+names(data)[names(data) == "Collar New"] <- "Collar"
+names(data)[names(data) == "Washing Color New"] <- "WC"
+names(data)[names(data) == "Washing New"] <- "Washing"
+names(data)[names(data) == "Trouser Rise"] <- "TR"
+names(data)[names(data) == "Trouser Fit New"] <- "TFit"
+
+# Omit Missing Values
+fullrecords <- na.omit(data)
+
+# Mean Return Rate
+ReturnNum <- as.numeric(Return) - 1
+mean(ReturnNum)
+
+# Average Size ordered
+mean(Size)
+# Boxplot Size
+boxplot(Size, col = "cyan4", main = "Boxplot Size")
+# Barplot Size
+bp_size <- barplot(prop.table(table(Size)), main = "Frequency of Sizes", ylim = c(0,0.3), col = "cyan4", names.arg = c("XXS/32", "XS/34", "S/36", "M/38", "L/40", "XL/42", "XXL/44", "46", "48", "50", "52", "54", "56"))
+text(bp_size, 0, round(prop.table(table(Size)), 2), cex = 1, pos = 3, col = "white")
+
+# Average Age
+mean(Age)
+
+# Frequency of Age (Binned)
+# Set up Boundaries for Bins
+breaks <- c(0,18,24,34,44,54,64,65)
+# Specify Bin Labels
+labels <- c("under 18", "18-24", "25-34", "35-44", "45-54", "55-64", "over 65")
+# Bucketing Data Points into Bins
+bins <- cut(fullrecords$Age, breaks, include.lowest = T, right = FALSE, labels = labels)
+summary(bins)
+# Plotting the bins
+plot(bins, main = "Frequency of Age (binned)", ylab = "Number of Consumers", col = "cyan4")
+
+# Frequency of Gender
+prop.table(table(Gender))
+bp_gender <- barplot(prop.table(table(Gender)), main = "Frequency of Consumer Gender", ylim = c(0,1), names.arg = c("Female", "Male"), col = "cyan4")
+text(bp_gender, 0, round(prop.table(table(Gender)), 2), cex = 1, pos = 3, col = "white")
+
+# Average Return Rate by Gender
+ReturnGender.mean <- tapply(ReturnNum, Gender, mean)
+bpGenderReturn <- barplot(ReturnGender.mean, main = "Mean Return Rate by Gender", xlab = "Gender", ylab = "Mean Return Rate", ylim = c(0,1), names.arg = c("Female", "Male"), col = "cyan4")
+text(bpGenderReturn, 0, round(ReturnGender.mean, 2), cex = 1, pos = 3, col = "white")
+
+# Average Return Rate by Age
+ReturnAge.mean <- tapply(ReturnNum, bins, mean)
+bpReturnAge <- barplot(ReturnAge.mean, main = "Mean Return Rate by Age", xlab = "Age", ylab = "Mean Return Rate", ylim = c(0,1), names.arg = c("under 18", "18-24", "25-34", "35-44", "45-54", "55-64", "over 65"), col = "cyan4")
+text(bpReturnAge, 0, round(ReturnAge.mean, 3), cex = 1, pos = 3, col = "white")
+
+# Average Return Rate by Size
+ReturnSize.mean <- tapply(ReturnNum, Size, mean)
+bpReturnSize <- barplot(ReturnSize.mean, main = "Mean Return Rate by Size", xlab = "Size", ylab = "Mean Return Rate", ylim = c(0,1), names.arg = c("XXS/32", "XS/34", "S/36", "M/38", "L/40", "XL/42", "XXL/44", "46", "48", "50", "52", "54", "56"), col = "cyan4")
+text(bpReturnSize, 0, round(ReturnSize.mean, 2), cex = 1, pos = 3, col = "white")
+
+# Frequency of Natural Fiber Percentage (Binned)
+# Set up Boundaries for Bins
+breaks <- c(0,0.20,0.50,0.75,0.85,0.90,0.95,1)
+# Specify Bin Labels
+labels <- c("0-20%", "21-50%", "51-75%", "76-85%", "86-90%", "91-95%", "96-100%")
+# Bucketing Data Points into Bins
+bins <- cut(fullrecords$NFP, breaks, include.lowest = T, right = FALSE, labels = labels)
+summary(bins)
+# Plotting the bins
+plotNFP <- plot(bins, main = "Frequency of Natural Fiber Percentage (binned)", ylab = "No. of Products", col = "cyan4")
+bpNFP <- barplot(prop.table(table(bins)), main = "Frequency of Natural Fiber Percentage", ylim = c(0,0.75), col = "cyan4", xlab = "Natural Fiber Percentage", ylab = "Frequency of NFP")
+text(bpNFP, 0, round(prop.table(table(bins)),2), cex = 1, pos = 3, col = "white")
+
+# Average Return Rate by Natural Fiber Percentage
+ReturnNFP.mean <- tapply(ReturnNum, bins, mean)
+bpReturnNFP <- barplot(ReturnNFP.mean, main = "Mean Return Rate by Natural Fiber Percentage", xlab = "NFP", ylab = "Mean Return Rate", ylim = c(0,1), names.arg = c("0-20%", "21-50%", "51-75%", "76-85%", "86-90%", "91-95%", "96-100%"), col = "cyan4")
+text(bpReturnNFP, 0, round(ReturnNFP.mean, 3), cex = 1, pos = 3, col = "white")
+
+# Frequency of Womenswear and Menswear
+freqproductgender <- prop.table(table(fullrecords$PGender))
+bpproductgender <- barplot(freqproductgender, ylim = c(0,1), main = "Frequency of Womenswear and Menswear", col = "cyan4")
+text(bpproductgender, 0, round(freqproductgender, 2), cex = 1, pos = 3, col = "white")
+
+# Average Return Rate by Product Gender
+ReturnPGender.mean <- tapply(ReturnNum, PGender, mean)
+bpReturnProductGender <- barplot(ReturnPGender.mean, main = "Mean Return Rate by Product Gender", xlab = "Product Gender", ylab = "Mean Return Rate", ylim = c(0,1), names.arg = c("Womenswear", "Menswear"), col = "cyan4")
+text(bpReturnProductGender, 0 , round(ReturnPGender.mean, 2), cex = 1, pos = 3, col = "white")
+
+# Average Return Rate by COO
+COO.means <- tapply(ReturnNum, COO, mean)
+bpReturnCOO <- barplot(COO.means, main = "Mean Return Rate by COO", xlab = "COO", ylab = "Mean Return Rate", ylim = c(0,1), names.arg = c("China", "India", "Turkey", "Tunisia", "Vietnam", "Portugal", "Bulgaria", "Mauritius", "Romania", "Other"), col = "cyan4")
+text(bpReturnCOO, 0, round(COO.means, 2), cex = 1, pos = 3, col = "white")
+Color.means <- tapply(Return, ColorBlue, mean)
+
+# Average Return Rate by Color
+Color.means <- tapply(ReturnNum, Color, mean)
+bpReturnColor <- barplot(Color.means, main = "Mean Return Rate by Color", xlab = "Color", ylab = "Mean Return Rate", ylim = c(0,1), names.arg = c( "Blue", "Beige", "White", "Black", "Grey", "Brown", "Red", "Rose", "Yellow", "Green", "Orange", "Purple", "Out"), col = "cyan4")
+text(bpReturnColor, 0, round(Color.means, 2), cex = 1, pos = 3, col ="white")
+
+# Average Return Rate by Main Material
+MainMaterial.means <- tapply(ReturnNum, MM, mean)
+bpReturnMM <- barplot(MainMaterial.means, main = "Mean Return Rate by Main Material", xlab = "Main Material", ylab = "Mean Return Rate", ylim = c(0,1), names.arg = c("Cotton", "Wool", "Mohair", "Cashmere", "Alpaca", "Virgin Wool", "Silk", "Viscose", "Modal", "Cupro", "Polyester", "Yak", "Polyurethane" ), cex.names = 0.8, col ="cyan4")
+text(bpReturnMM, 0, round(MainMaterial.means, 2), cex = 1, pos = 3, col = "white")
+
+# Frequency of Product Groups
+freqPG <- prop.table(table(PG))
+bpfreqPG <- barplot(freqPG, main = "Frequency of Product Groups", ylim = c(0,0.4), col ="cyan4", names.arg = c( "Coats", "Jackets", "Blazers", "Saccos", "Blouses", "Shirts", "Polos", "T-Shirts", "Sweatshirts", "Heavy Knits", "Dresses", "Trousers", "Skirts"), cex.names = 0.8)
+text(bpfreqPG, 0, round(freqPG, 2), cex = 1, pos = 3, col = "white")
+
+# Average Return Rate by Product Group
+ProductGroup.means <- tapply(ReturnNum, PG, mean)
+bpReturnPG <- barplot(ProductGroup.means, main = "Mean Return Rate by Product Group", xlab = "Product Group", ylab = "Mean Return Rate", ylim = c(0,1), names.arg = c( "Coats", "Jackets", "Blazers", "Saccos", "Blouses", "Shirts", "Polos", "T-Shirts", "Sweatshirts", "Heavy Knits", "Dresses", "Trousers", "Skirts"), cex.names = 0.8, col = "cyan4")
+text(bpReturnPG, 0, round(ProductGroup.means, 2), cex = 1, pos = 3, col = "white")
+
+# Average Return Rate by Season
+Season.means <- tapply(ReturnNum, Season, mean)
+bpReturnSeason <- barplot(Season.means, main = "Mean Return Rate by Season", xlab = "Season", ylab = "Mean Return Rate", ylim = c(0,1), names.arg = c("F/W", "S/S", "NOS"), col ="cyan4")
+text(bpReturnSeason, 0, round(Season.means, 2), cex = 1, pos = 3, col = "white")
+
+# Frequency of Distribution Programs
+freqDP <- prop.table(table(DP))
+bpfreqDP <- barplot(freqDP, main = "Frequency of Distribution Programs", ylim = c(0,1), col ="cyan4", names.arg = c("Modern Casual", "Pure", "Denim"))
+text(bpfreqPG, 0, round(freqDP, 2), cex = 1, pos = 3, col = "white")
+
+# Mean Return Rate by Distribution Program
+DP.means <- tapply(ReturnNum, DP, mean)
+bpdistr <- barplot(DP.means, main = "Mean Return Rate by Distribution Program", xlab = "Distribution Program", ylab = "Mean Return Rate", ylim = c(0,1), names.arg = c("Modern Casual", "Pure", "Denim"), col = "cyan4")
+text(bpdistr, 0, round(DP.means,2), cex = 1, pos = 3, col = "white")
+
+# Frequency Lifecycle Segment
+freqLC <- prop.table(table(LS))
+bpfreqLC <- barplot(freqLC, main = "Lifecycle Status", ylim = c(0,1), col = "cyan4", names.arg = c("Active", "Inactive", "New", "Lost"))
+text(bpfreqLC, 0, round(freqLC, 2), cex = 1, pos = 3, col = "white")
+
+# Frequency Monetary Segment
+freqMS <- prop.table(table(MS))
+bpfreqMS <- barplot(freqMS, main = "Monetary Status", ylim = c(0,0.5), col = "cyan4", names.arg = c("Basic", "Good", "Top", "Full Return", "N/A"))
+text(bpfreqMS, 0, round(freqMS, 2), cex = 1, pos = 3, col = "white")
+
+# Frequency Frequency Segment
+freqFS <- prop.table(table(FS))
+bpfreqFS <- barplot(freqFS, main = "Purchasing Frequency", ylim = c(0,0.5), col = "cyan4", names.arg = c("Medium", "Heavy", "Slow", "Single Order", "Zero Orders"))
+text(bpfreqFS, 0, round(freqFS, 2), cex = 1, pos = 3, col = "white")
+
+# Relevel Color to Blue
+fullrecords$Color <- factor(fullrecords$Color, ordered = FALSE)
+fullrecords$Color <- relevel(fullrecords$Color, ref = "3")
+
+# Excluding Accessories and Distr.Program "Mr." from the Data
+fullrecords$PG <- as.numeric(fullrecords$PG)
+fullrecords$DP <- as.numeric(fullrecords$DP)
+fullrecords <- fullrecords[which(fullrecords$PG <= 13),]
+fullrecords <- fullrecords[which(fullrecords$DP <=4),]
+
+# Recode categorical variables as factors
+fullrecords$DP <- as.factor(fullrecords$DP)
+fullrecords$PG <- as.factor(fullrecords$PG)
+fullrecords$Appliqué <- as.factor(fullrecords$Appliqué)
+fullrecords$Leather <- as.factor(fullrecords$Leather)
+fullrecords$NTP <- as.factor(fullrecords$NTP)
+fullrecords$PGender <- as.factor(fullrecords$PGender)
+fullrecords$EasyCare <- as.factor(fullrecords$EasyCare)
+fullrecords$Robustness <- as.factor(fullrecords$Robustness)
+fullrecords$Color <- as.factor(fullrecords$Color)
+fullrecords$CF <- as.factor(fullrecords$CF)
+fullrecords$FS <- as.factor(fullrecords$FS)
+fullrecords$MS <- as.factor(fullrecords$MS)
+fullrecords$LS <- as.factor(fullrecords$LS)
+fullrecords$Gender <- as.factor(fullrecords$Gender)
+fullrecords$Season <- as.factor(fullrecords$Season)
+fullrecords$MM <- as.factor(fullrecords$MM)
+fullrecords$MP <- as.factor(fullrecords$MP)
+fullrecords$OM <- as.factor(fullrecords$OM)
+fullrecords$Pattern <- as.factor(fullrecords$Pattern)
+fullrecords$Fit <- as.factor(fullrecords$Fit)
+fullrecords$Length <- as.factor(fullrecords$Length)
+fullrecords$COO <- as.factor(fullrecords$COO)
+fullrecords$Return <- as.factor(fullrecords$Return)
+fullrecords$TFit <- as.factor(fullrecords$TFit)
+fullrecords$TR <- as.factor(fullrecords$TR)
+fullrecords$Belt <- as.factor(fullrecords$Belt)
+fullrecords$BeltLoop <- as.factor(fullrecords$BeltLoop)
+fullrecords$SL <- as.factor(fullrecords$SL)
+fullrecords$LLength <- as.factor(fullrecords$LLength)
+fullrecords$LShape <- as.factor(fullrecords$LShape)
+fullrecords$Sleeve <- as.factor(fullrecords$Sleeve)
+fullrecords$Collar <- as.factor(fullrecords$Collar)
+fullrecords$Washing <- as.factor(fullrecords$Washing)
+fullrecords$WC <- as.factor(fullrecords$WC)
+
+# Fit Formula
+Log_formula <- as.formula(Return ~ factor(PG) + factor(DP) + Price + factor(COO) + factor(Season) + factor(Gender) + Age + factor(LS) + factor(MS) + factor(FS) + factor(Color) + factor(CF) + factor(Pattern) + factor(Appliqué) + Size + factor(Fit) + factor(Length) + NFP + factor(MP) + factor(MM) + factor(OM) + factor(NTP) + factor(Leather) + factor(EasyCare) + factor(Robustness))
+# Fit Model with complete data set
+logmodelfull <- glm(Log_formula, data = fullrecords, family = binomial(link = "logit"))
+summary(logmodelfull)
+
+# Marginal Effects of the Coefficients
+marginaleffectsfull <- logitmfx(logmodelfull, data = fullrecords, atmean = TRUE, robust = TRUE)
+marginaleffectsfull
+
+# Fit Model for Womenswear and Menswear
+logmodelwomen <- glm(Log_formula, data = fullrecords, subset = fullrecords$PGender == "0", family = binomial(link = "logit"))
+logmodelmen <- glm(Log_formula, data = fullrecords, subset = fullrecords$PGender == "1", family = binomial(link = "logit"))
+
+# Marginal Effects for Womenswear and Menswear
+logitmfx(logmodelwomen,data = fullrecords, atmean = TRUE, robust = TRUE)
+logitmfx(logmodelmen, data = fullrecords, atmean = TRUE, robust = TRUE)
+
+# Fit Model for T-Shirts
+log_formula_tshirts <- as.formula(Return ~ factor(DP) + Price + factor(Season) + factor(COO) + factor(Gender) + Age + factor(LS) + factor(MS) + factor(FS) + factor(Color) + factor(CF) + factor(Pattern) + factor(Appliqué) + Size + factor(Fit) + NFP + factor(MM) + factor(MP) + factor(OM) + factor(NTP) + factor(EasyCare) + factor(Robustness) + factor(Collar) + factor(SL))
+logmodeltshirts <- glm(log_formula_tshirts, data = fullrecords, family = binomial(link = "logit"))
+
+# Marginal Effects forT-Shirts
+marginaleffectstshirts <- logitmfx(logmodeltshirts, data = fullrecords, atmean = TRUE, robust = TRUE)
+marginaleffectstshirts
+
+# Fit Model for Dresses
+log_formula_dresses <- as.formula(Return ~ factor(DP) + Price + factor(Season) + factor(COO) + factor(Gender) + Age + factor(LS) + factor(MS) + factor(FS) + factor(Color) + factor(CF) + factor(Pattern) + factor(Appliqué) + factor(Belt) + factor(Lining) + Size + factor(Fit) + NFP + factor(MM) + factor(MP) + factor(OM) + factor(NTP) + factor(Leather) + factor(EasyCare) + factor(Robustness) + factor(Collar) + factor(SL))
+logmodeldresses <- glm(log_formula_dresses, data = fullrecords, subset = fullrecords$PG == "11", family = binomial(link = "logit"))
+
+# Marginal Effects for Dresses
+marginaleffectsdresses <- logitmfx(logmodeldresses, data = fullrecords, atmean = TRUE, robust = TRUE)
+marginaleffectsdresses
+
+# Fit Model for Trousers
+log_formula_trouser <- as.formula(Return ~ factor(DP) + Price + factor(Season) + factor(COO) + factor(Gender) + Age + factor(LS) + factor(MS) + factor(FS) + factor(Color) + factor(CF) + factor(Pattern) + factor(Appliqué) + factor(Finishing) + factor(Fastening) + factor(Belt) + factor(BeltLoop) + factor(Washing) + factor(WC) + factor(Pleat) + factor(Belt) + factor(BeltLoop) + factor(`Trouser Turnups`) + Size + factor(TFit) + factor(LLength) + factor(LShape) + factor(TR) + NFP + factor(MM) + factor(MP) + factor(OM) + factor(NTP) + factor(Leather) + factor(EasyCare) + factor(Robustness))
+logmodeltrouser <- glm(log_formula_trouser, data = fullrecords, subset = fullrecords$PG == "12", family = binomial(link = "logit"))
+summary(logmodeltrouser)
+
+# Marginal Effects for Trousers
+marginaleffectstrousers <- logitmfx(logmodeltrouser, data = fullrecords, atmean = TRUE, robust = TRUE)
+marginaleffectstrousers
+
+# Interpretation of Table of Deviance
+anova(logmodelfull, test = "Chisq")
+
+# Fit the Null Model only containing consumer characteristics
+glm0formula <- (Return ~ factor(Gender) + Age + factor(LS) + factor(MS) + factor(FS))
+glm0 <- glm(glm0formula, data = fullrecords, family = binomial(link = "logit"))
+
+# Test Significance of the Full Model against the Null Model using Anova
+anova(glm0, logmodelfull, test = "Chisq")
+# Test Significance of Full Model against the Null Model using Likelihood Ratio Test
+lrtest(glm0, logmodelfull)
+
+# Pseudo R^2
+Stat = nagelkerke(logmodelfull, glm0)
+Stat
+pR2(logmodelfull)
+
+# Analysis of variance for individual terms using Wald Test
+Anova(logmodelfull, type = "II", test = "Wald")
+
+# Fit Model only with product attributes for Variable Importance
+glmProductFormula <- as.formula(Return ~ factor(PG) + factor(DP) + Price + factor(COO) + factor(Season) + factor(Color) + factor(CF) + factor(Pattern) + factor(Appliqué) + Size + factor(Fit) + factor(Length) + NFP + factor(MP) + factor(MM) + factor(OM) + factor(NTP) + factor(Leather) + factor(EasyCare) + factor(Robustness))
+logmodelProductAttr. <- glm(glmProductFormula, data = fullrecords, family = binomial(link = "logit"))
+varImp(logmodelProductAttr.)
+varImp(logmodelfull)
+
+# Create Data Partition (80:20)
+subset_size = floor(0.80*nrow(fullrecords))
+set.seed(5678)
+training_sample = sample(seq_len(nrow(fullrecords)), size = subset_size)
+train = fullrecords[training_sample,]
+test = fullrecords[-training_sample,]
+
+# Fitting Training Model
+training.logmodel <- glm(Log_formula, data = train, family = binomial(link = "logit"))
+# Predicting based on Training Model
+pred = predict(training.logmodel, newdata = test, type = "response")
+pred <- ifelse(pred > 0.5, 1, 0)
+
+# Assessing the misclassification error
+misClasificError <- mean(pred != test$Return)
+print(paste("Accuracy", 1-misClasificError))
+
+# Confusion Matrix
+confusionMatrix(table(pred, test$Return))
+
+# ROC Curve
+ROC <- roc(test$Return, pred)
+plot(ROC, col = "red")
+predict <- predict(training.logmodel, newdata = test, type = "response")
+ROCpred <- prediction(predict, test$Return)
+ROCperf <- performance(ROCpred, measure = "tpr", x.measure = "fpr")
+plot(ROCperf)
+abline(0,1, lty = 2)
+auc <- performance(ROCpred, measure = "auc")
+auc <- auc@y.values[[1]]
+auc
+
+# Fit data set
+Fullrecordsnum <- na.omit(data)
+
+# Fit Formula
+lin_formula <- as.formula(Return ~ factor(PG) + factor(DP) + Price + factor(COO) + factor(Season) + factor(Gender) + Age + factor(LS) + factor(MS) + factor(FS) + factor(Color) + factor(CF) + factor(Pattern) + factor(Appliqué) + Size + factor(Fit) + factor(Length) + NFP + factor(MP) + factor(MM) + factor(OM) + factor(NTP) + factor(Leather) + factor(EasyCare) + factor(Robustness))
+
+# Fit Model
+linmodelfull <- lm(lin_formula, data = Fullrecordsnum)
+summary(linmodelfull)
